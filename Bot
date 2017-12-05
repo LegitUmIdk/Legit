@@ -1,0 +1,57 @@
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Discord;
+
+namespace GovorilkaDiscordBot
+{
+    class Program
+    {
+
+        private DiscordClient _client;
+        private string bot_token = "xxxxxx";
+        private string client_id = "xxxxxx";
+        private int permission = 3181568;
+        private string link = "https://discordapp.com/oauth2/authorize?client_id=%7B0%7D&scope=bot&permissions=%7B1%7D";
+
+        private static void Main(string[] args) => new Program().Start();
+
+        private void Start()
+        {
+            _client = new DiscordClient();
+            _client.MessageReceived += _client_MessageReceived;
+            _client.ExecuteAndWait(()=>connect(_client));
+        }
+
+        private async Task connect(DiscordClient client)
+        {
+            await client.Connect(bot_token);
+
+            if (client.State == ConnectionState.Connected)
+            {
+                Console.WriteLine("Bot connected");
+
+                //Ссылка для добавления бота на сервер
+                string link_to_add = string.Format(link, client_id, permission);
+                Console.WriteLine("To add bot for your server open this link:");
+                Console.WriteLine(link_to_add);
+
+
+            }
+            else
+            {
+                Console.WriteLine("Something going wrong");
+            }
+        }
+
+        private async void _client_MessageReceived(object sender, MessageEventArgs e)
+        {
+            if (!e.Message.IsAuthor)
+                await e.Channel.SendMessage("Here come the Rain");
+        }
+    }
+}
